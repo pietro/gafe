@@ -1,5 +1,7 @@
 # Get As a Function, Eh!
 
+![Continuous integration](https://github.com/pietro/gafe/workflows/ci/badge.svg)
+
 An AWS Lambda that will do HTTP Get requests for you.
 
 ## Is this any good?
