@@ -1,0 +1,32 @@
+[package]
+name = "gafe"
+description = "Get As a Function, Eh!"
+version = "1.0.0"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/pietro/gafe"
+keywords = ["AWS", "Lambda"]
+authors = ["Pietro Monteiro <pietro@sociotechnical.xyz"]
+edition = "2021"
+
+include = [
+  "Cargo.toml",
+  "Cargo.lock",
+  "LICENSE-APACHE",
+  "LICENSE-MIT",
+  "src/**/*.rs",
+]
+
+[dependencies]
+base64 = "0.13.0"
+# TLS support for hyper.
+hyper-tls = "0.5"
+lambda_runtime = "0.5"
+# Subscribers to traces from tracing crate.
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
+# These are all dependecies of the lambda runtime. Adding here so we can use them directly.
+futures-util = "0.3"
+hyper = "0.14"
+serde = "1"
+tokio = "1"
+tracing = "0.1"
