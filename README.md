@@ -1,6 +1,7 @@
 # Get As a Function, Eh!
 
-![Continuous integration](https://github.com/pietro/gafe/workflows/ci/badge.svg)
+[![crates.io](https://img.shields.io/crates/v/gafe.svg)](https://crates.io/crates/gafe)
+[![CI](https://github.com/pietro/gafe/actions/workflows/ci.yml/badge.svg)](https://github.com/pietro/gafe/actions/workflows/ci.yml)
 
 An AWS Lambda that will do HTTP Get requests for you.
 
