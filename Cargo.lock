@@ -221,7 +221,7 @@ dependencies = [
 
 [[package]]
 name = "gafe"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "base64",
  "futures-util",
@@ -230,6 +230,7 @@ dependencies = [
  "lambda_runtime",
  "serde",
  "tokio",
+ "tokio-stream",
  "tracing",
  "tracing-subscriber",
 ]

@@ -4,6 +4,7 @@ use hyper::{
 };
 use hyper_tls::HttpsConnector;
 use std::collections::HashMap;
+use tokio_stream::{self as stream, StreamExt};
 use tracing::{debug, error};
 
 use crate::error::{Error, Result};
@@ -14,15 +15,23 @@ pub struct HTTPResponse {
     pub body: String,
 }
 
-/// Parse Map of header string into a hyper HeaderMap.
-pub async fn parse_headers(headers: &HashMap<String, String>) -> Result<HeaderMap> {
-    let mut header_map = HeaderMap::with_capacity(headers.len());
-    for (name, value) in headers {
-        let header_name: HeaderName = name.parse()?;
-        let value = HeaderValue::try_from(value.trim_start())?;
-        header_map.insert(header_name, value);
-    }
-    debug!("request_headers: {:?}: ", header_map);
+/// Parse Map of header strings into a hyper `HeaderMap`.
+pub async fn parse_headers(headers: &Option<HashMap<String, String>>) -> Result<HeaderMap> {
+    let header_map = match headers {
+        Some(h) => {
+            let mut header_map = HeaderMap::with_capacity(h.len());
+            let mut stream = stream::iter(h);
+
+            while let Some((name, value)) = stream.next().await {
+                let header_name: HeaderName = name.parse()?;
+                let value = HeaderValue::try_from(value.trim_start())?;
+                header_map.insert(header_name, value);
+            }
+            header_map
+        }
+        None => HeaderMap::new(),
+    };
+    debug!("parsed request_headers={:?}: ", header_map);
     Ok(header_map)
 }
 
@@ -30,25 +39,23 @@ pub async fn parse_headers(headers: &HashMap<String, String>) -> Result<HeaderMa
 pub async fn parse_uri(req_uri: &str) -> Result<Uri> {
     let uri = Uri::try_from(req_uri)?;
 
-    match uri.scheme() {
-        Some(_) => {
-            debug!("uri: {:?}", uri);
-            Ok(uri)
-        }
-        None => {
-            error!("empty scheme for  URI: {}", uri);
-            Err(Error {
-                message: String::from("empty scheme"),
-            })
-        }
+    if uri.scheme().is_none() {
+        error!("empty scheme for  URI: {}", uri);
+        Err(Error {
+            message: String::from("empty scheme"),
+        })
+    } else {
+        debug!("uri: {:?}", uri);
+        Ok(uri)
     }
 }
 
 /// Convert response headers to a Map of string keys to String Values
 async fn stringfy_headers(header_map: &HeaderMap) -> Result<HashMap<String, String>> {
     let mut headers = HashMap::with_capacity(header_map.len());
+    let mut stream = stream::iter(header_map);
 
-    for (k, v) in header_map {
+    while let Some((k, v)) = stream.next().await {
         let header_name = k.to_string();
         let header_value = v.to_str()?;
         headers.insert(header_name, String::from(header_value));
@@ -149,6 +156,7 @@ mod tests {
             let ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36";
             let mut headers = HashMap::<String, String>::new();
             headers.insert(String::from("User-Agent"), String::from(ua));
+            let headers = Some(headers);
 
             let actual = parse_headers(&headers).await.unwrap();
 
@@ -169,6 +177,7 @@ mod tests {
             let mut headers = HashMap::<String, String>::new();
             headers.insert(x_foo.to_string(), foo.to_string());
             headers.insert(x_bar.to_string(), bar.to_string());
+            let headers = Some(headers);
 
             let actual = parse_headers(&headers).await.unwrap();
 
@@ -190,6 +199,8 @@ mod tests {
         async fn invalid_header_name() {
             let mut headers = HashMap::<String, String>::new();
             headers.insert(String::from("Whaaaaa?"), String::from("value"));
+            let headers = Some(headers);
+
             assert!(parse_headers(&headers).await.is_err());
         }
 
@@ -197,7 +208,17 @@ mod tests {
         async fn empty_header_name() {
             let mut headers = HashMap::<String, String>::new();
             headers.insert(String::from(""), String::from("value"));
+            let headers = Some(headers);
+
             assert!(parse_headers(&headers).await.is_err());
+        }
+
+        #[tokio::test]
+        async fn no_headers() {
+            let headers = None;
+            let actual = parse_headers(&headers).await.unwrap();
+            let expected = HeaderMap::new();
+            assert_eq!(actual, expected);
         }
     }
 }

@@ -12,7 +12,7 @@ use crate::util::HTTPResponse;
 
 #[derive(Debug, Deserialize)]
 struct Request {
-    pub headers: HashMap<String, String>,
+    pub headers: Option<HashMap<String, String>>,
     pub uri: String,
 }
 
@@ -53,7 +53,7 @@ async fn main() -> StdResult<(), lambda_runtime::Error> {
     Ok(())
 }
 
-/// The handler of the Lambda event. Wraps `fetch` so we can inject the req_id in all responses.
+/// The handler of the Lambda event. Wraps `fetch` so we can inject the `req_id` in all responses.
 async fn handler(event: LambdaEvent<Request>) -> StdResult<SuccessResponse, FailureResponse> {
     let (req, ctx) = event.into_parts();
 
@@ -83,6 +83,7 @@ async fn handler(event: LambdaEvent<Request>) -> StdResult<SuccessResponse, Fail
 /// Parse the request and get the response.
 async fn fetch(request: Request) -> Result<HTTPResponse> {
     let uri_fut = util::parse_uri(&request.uri);
+
     let headers_fut = util::parse_headers(&request.headers);
 
     let (uri, headers) = futures_util::try_join!(uri_fut, headers_fut)?;

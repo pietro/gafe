@@ -22,40 +22,40 @@ impl Display for Error {
 impl error::Error for Error {}
 
 impl From<hyper::Error> for Error {
-    fn from(e: hyper::Error) -> Error {
-        Error {
+    fn from(e: hyper::Error) -> Self {
+        Self {
             message: e.to_string(),
         }
     }
 }
 
 impl From<hyper::header::InvalidHeaderName> for Error {
-    fn from(e: hyper::http::header::InvalidHeaderName) -> Error {
-        Error {
+    fn from(e: hyper::http::header::InvalidHeaderName) -> Self {
+        Self {
             message: e.to_string(),
         }
     }
 }
 
 impl From<hyper::header::InvalidHeaderValue> for Error {
-    fn from(e: hyper::http::header::InvalidHeaderValue) -> Error {
-        Error {
+    fn from(e: hyper::http::header::InvalidHeaderValue) -> Self {
+        Self {
             message: e.to_string(),
         }
     }
 }
 
 impl From<hyper::http::uri::InvalidUri> for Error {
-    fn from(e: hyper::http::uri::InvalidUri) -> Error {
-        Error {
+    fn from(e: hyper::http::uri::InvalidUri) -> Self {
+        Self {
             message: e.to_string(),
         }
     }
 }
 
 impl From<hyper::header::ToStrError> for Error {
-    fn from(e: hyper::header::ToStrError) -> Error {
-        Error {
+    fn from(e: hyper::header::ToStrError) -> Self {
+        Self {
             message: e.to_string(),
         }
     }
