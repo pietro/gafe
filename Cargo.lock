@@ -372,9 +372,9 @@ checksum = "1aab8fc367588b89dcee83ab0fd66b72b50b72fa1904d7095045ace2b0c81c35"
 
 [[package]]
 name = "lambda_runtime"
-version = "0.5.0"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23cbc35fd60573f46fa6c6292a4539198bc094efe4b7691a7ff8c173a56e0382"
+checksum = "1c73464e59463e91bf179195a308738477df90240173649d5dd2a1f3a2e4a2d2"
 dependencies = [
  "async-stream",
  "bytes",
