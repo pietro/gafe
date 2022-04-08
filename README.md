@@ -79,3 +79,12 @@ $ aws lambda invoke
   output.json
 $ cat output.json # Prints the full non-formated version of the example response from above
 ```
+
+
+
+# NOTES:
+
+Payload limit (request and response):
+
+6 MB (synchronous)
+256 KB (asynchronous)
