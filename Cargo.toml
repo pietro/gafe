@@ -21,7 +21,7 @@ include = [
 base64 = "0.13.0"
 # TLS support for hyper.
 hyper-tls = "0.5"
-lambda_runtime = "0.5"
+lambda_runtime = "0.6"
 # Subscribers to traces from tracing crate.
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
 # These are all dependecies of the lambda runtime. Adding here so we can use them directly.
