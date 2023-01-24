@@ -18,7 +18,7 @@ include = [
 ]
 
 [dependencies]
-base64 = "0.13.1"
+base64 = "0.21.0"
 # TLS support for hyper.
 hyper-tls = "0.5"
 lambda_runtime = "0.7"
